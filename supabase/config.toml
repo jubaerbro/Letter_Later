@@ -1,0 +1,42 @@
+# Supabase CLI configuration. Used for `supabase link`, `supabase db push` and
+# `supabase functions deploy` against your hosted project (no Docker required for those).
+project_id = "letter-later"
+
+[api]
+schemas = ["public"]
+max_rows = 1000
+
+[auth]
+site_url = "https://letterlater.app"
+additional_redirect_urls = ["letterlater://", "https://letterlater.app"]
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+# 6-digit codes are friendlier on phones than magic links.
+otp_length = 6
+otp_expiry = 900
+
+# Functions authenticate callers themselves (worker secret / webhook secret / signed links).
+[functions.deliver-due]
+verify_jwt = false
+
+[functions.revenuecat-webhook]
+verify_jwt = false
+
+[functions.email-optout]
+verify_jwt = false
+
+# These require a signed-in user (JWT verified by the platform and again in code).
+[functions.create-letter]
+verify_jwt = true
+
+[functions.letter-content]
+verify_jwt = true
+
+[functions.sync-entitlement]
+verify_jwt = true
+
+[functions.delete-account]
+verify_jwt = true
