@@ -31,3 +31,6 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key-not-a-secret
         run: npx expo export --platform android --platform web
+      - name: Client bundles contain no server secrets
+        run: |
+          ! grep -rlE "SERVICE_ROLE|LETTER_ENCRYPTION_KEYS|WORKER_SECRET|RESEND_API_KEY|REVENUECAT_SECRET|EMAIL_OPTOUT_SECRET|HEALTH_CHECK_TOKEN" dist/_expo/static/js

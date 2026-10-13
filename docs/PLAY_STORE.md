@@ -5,8 +5,7 @@ in the Play Console or with your accounts.
 
 ## Identity & build
 
-- ☐ Choose the final **package name** and set `ANDROID_PACKAGE` (default `app.letterlater.mobile`).
-  It can never change after the first upload.
+- ✅ Package name **`app.laterletter.mobile`** (confirmed). It can never change after the first upload.
 - ✅ Target API level 36 (Expo SDK 57), min SDK 24, edge-to-edge.
 - ✅ Release builds are minified and resource-shrunk (`expo-build-properties`).
 - ✅ `eas.json` production profile builds an **Android App Bundle** with remote, auto-incremented `versionCode`.
@@ -19,9 +18,10 @@ in the Play Console or with your accounts.
 ## Store listing assets
 
 - ✅ App icon 512×512: `assets/images/play-store-icon-512.png` (adaptive + themed icons are in the app).
-- ☐ Feature graphic 1024×500 and at least 2 phone screenshots (take them from a real device build).
-- ☐ Short and full description. Suggested short description:
-  *“Write letters that open in the future — and grow a tree together while you wait.”*
+- ✅ Feature graphic 1024×500: `store/feature-graphic.png`.
+- ✅ 8 phone screenshots 1080×1920: `store/screenshots/` (rendered from the web build with sample
+  data — ☐ swap in real-device captures when you can).
+- ✅ Name, short and full description, release notes: `store/listing.md` (lengths tested against Play limits).
 
 ## Policy requirements
 
@@ -36,7 +36,7 @@ in the Play Console or with your accounts.
 | Subscriptions | ✅ Google Play Billing via RevenueCat; price, renewal and cancellation terms on the paywall; restore purchases; link to Play subscription management; server-side verification. |
 | Target audience | ☐ Declare 13+; don’t opt into the Families program (the app has an age confirmation). |
 | Content rating | ☐ Complete the questionnaire: users interact/share content (letters); no ads. |
-| App access for review | ☐ Create a reviewer account, set a password in You → Sign-in & security, and enter those credentials under App access (reviewers can’t receive OTP emails). Put a letter that is already “ready to open” in that account. |
+| App access for review | ✅ `npm run seed:reviewer` creates a password account with a letter ready to open and one growing (see DEPLOY.md step 9). ☐ Enter the credentials under App access. |
 | Ads | ✅ None. Declare “no ads”. |
 
 ## Data safety form (matches what the code does)
@@ -59,7 +59,7 @@ in the Play Console or with your accounts.
 
 ## Before you press “Publish”
 
-- ☐ `min_delivery_lead_seconds` is `3600`, `ALLOW_TEST_CLOCK` is unset/false, `EMAIL_PROVIDER=resend`.
+- ☐ `npm run check:env:server -- --production` passes (it enforces `EMAIL_PROVIDER=resend`, no test clock, no link logging), and `min_delivery_lead_seconds` is `3600`.
 - ☐ Supabase on a paid plan with daily backups (consider PITR), SMTP configured, OTP template updated.
 - ☐ `LETTER_ENCRYPTION_KEYS` backed up offline.
 - ☐ `assetlinks.json` has the Play App Signing SHA-256 and is served from your domain.

@@ -13,7 +13,7 @@ const ROOT = join(__dirname, '..', '..');
 const PORT = 54329 + Math.floor(Math.random() * 500);
 
 export default async function setup(project: TestProject) {
-  const dir = mkdtempSync(join(tmpdir(), 'letter-later-pg-'));
+  const dir = mkdtempSync(join(tmpdir(), 'laterletter-pg-'));
   const isRoot = typeof process.getuid === 'function' && process.getuid() === 0;
   const pg = new EmbeddedPostgres({
     databaseDir: dir,

@@ -8,8 +8,8 @@ const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
 export const config = {
   supabaseUrl,
   supabaseAnonKey,
-  webBaseUrl: (process.env.EXPO_PUBLIC_WEB_BASE_URL ?? 'https://letterlater.app').replace(/\/$/, ''),
+  webBaseUrl: (process.env.EXPO_PUBLIC_WEB_BASE_URL ?? 'https://laterletter.app').replace(/\/$/, ''),
   revenueCatAndroidKey: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY ?? '',
-  supportEmail: process.env.EXPO_PUBLIC_SUPPORT_EMAIL ?? 'support@letterlater.app',
+  supportEmail: process.env.EXPO_PUBLIC_SUPPORT_EMAIL ?? 'support@laterletter.app',
   isConfigured: /^https:\/\/.+/.test(supabaseUrl) && supabaseAnonKey.length > 20,
 };

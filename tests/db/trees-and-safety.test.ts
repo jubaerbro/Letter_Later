@@ -140,7 +140,7 @@ describe('anti-abuse limits and identity', () => {
 
   it('reserved names cannot be used to impersonate the service', async () => {
     const u = await createUser(db, { onboard: false });
-    const [r] = await db.asUser(u.id, (q) => q(`select public.complete_onboarding('Letter Later Team', 'UTC', 'north', true, true) as r`));
+    const [r] = await db.asUser(u.id, (q) => q(`select public.complete_onboarding('LaterLetter Team', 'UTC', 'north', true, true) as r`));
     expect(r.r).toEqual({ ok: false, error: 'display_name_reserved' });
     await db.asUser(u.id, (q) => q(`update public.profiles set display_name = 'Sam Rivers' where id = $1`, [u.id]));
     await expect(db.asUser(u.id, (q) => q(`update public.profiles set display_name = 'Support' where id = $1`, [u.id]))).rejects.toThrow(

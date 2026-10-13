@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Synthesizes Letter Later's ambient music and sound effects from scratch, so every sound in
+ * Synthesizes LaterLetter's ambient music and sound effects from scratch, so every sound in
  * the app is original and free of third-party licensing. Output: assets/audio/*.m4a (AAC).
  * Requires ffmpeg on PATH. Deterministic: same seed → same files.
  *

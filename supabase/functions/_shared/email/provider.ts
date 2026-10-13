@@ -98,11 +98,16 @@ export class MockEmailProvider implements EmailProvider {
 
 export function emailProviderFromEnv(env: (key: string) => string | undefined): EmailProvider {
   const provider = (env('EMAIL_PROVIDER') ?? 'mock').toLowerCase();
+  const production = env('APP_ENV') === 'production';
+  if (production && provider !== 'resend') {
+    // Never silently "send" mock email to real users.
+    throw new Error('APP_ENV=production requires EMAIL_PROVIDER=resend');
+  }
   if (provider === 'resend') {
     const key = env('RESEND_API_KEY');
     const from = env('EMAIL_FROM');
     if (!key || !from) throw new Error('EMAIL_PROVIDER=resend requires RESEND_API_KEY and EMAIL_FROM');
     return new ResendProvider(key, from);
   }
-  return new MockEmailProvider(env('MOCK_EMAIL_LOG_LINKS') === 'true');
+  return new MockEmailProvider(!production && env('MOCK_EMAIL_LOG_LINKS') === 'true');
 }

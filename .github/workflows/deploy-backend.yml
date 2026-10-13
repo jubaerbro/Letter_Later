@@ -1,0 +1,44 @@
+name: Deploy backend
+
+# Applies migrations, uploads Edge Function secrets, deploys functions and stores the
+# scheduler's Vault secrets on your Supabase project. Run it by hand (Actions → Run workflow).
+on:
+  workflow_dispatch:
+    inputs:
+      skip_migrations:
+        description: Skip database migrations
+        type: boolean
+        default: false
+
+concurrency: deploy-backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Gate on tests
+        run: npm test && npm run test:db
+      - name: Write Edge Function secrets file
+        env:
+          FUNCTIONS_ENV: ${{ secrets.FUNCTIONS_ENV }}
+        run: |
+          test -n "$FUNCTIONS_ENV" || { echo "Add the FUNCTIONS_ENV secret (contents of supabase/functions/.env)"; exit 1; }
+          printf '%s\n' "$FUNCTIONS_ENV" > supabase/functions/.env
+          chmod 600 supabase/functions/.env
+      - name: Deploy
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: npm run deploy:backend -- ${{ inputs.skip_migrations && '--skip-migrations' || '' }}
+      - name: Remove secrets file
+        if: always()
+        run: rm -f supabase/functions/.env

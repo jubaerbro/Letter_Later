@@ -1,6 +1,7 @@
 // Deno-only helpers for Edge Functions. Not imported by the app or by tests.
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
 import { loadKeyRing } from './crypto.ts';
+import { checkServerEnv, formatIssues } from './env.ts';
 import { emailProviderFromEnv } from './email/provider.ts';
 import { ExpoPushSender, MockPushSender } from './push.ts';
 import { DbError, type Db, type LetterEmailRow } from './services/db.ts';
@@ -66,13 +67,28 @@ export function log(event: string, detail: Record<string, unknown> = {}) {
   console.log(JSON.stringify({ event, ...detail, at: new Date().toISOString() }));
 }
 
+export const isProduction = () => env('APP_ENV') === 'production';
+
+let configChecked = false;
+/** In production, refuse to run with unsafe or incomplete configuration (logs key names only). */
+export function assertConfig() {
+  if (configChecked) return;
+  const errors = checkServerEnv(env, { production: isProduction() }).filter((i) => i.severity === 'error');
+  if (errors.length && isProduction()) {
+    console.error(formatIssues('Edge Function configuration', errors));
+    throw new Error('Server is misconfigured; see function logs.');
+  }
+  configChecked = true;
+}
+
 export async function messagingDeps(): Promise<MessagingDeps> {
+  assertConfig();
   const supabaseUrl = requireEnv('SUPABASE_URL');
   const expoToken = env('EXPO_ACCESS_TOKEN');
   return {
     db: new SupabaseDb(serviceClient()),
     email: emailProviderFromEnv(env),
-    push: env('PUSH_PROVIDER') === 'mock' ? new MockPushSender() : new ExpoPushSender(expoToken),
+    push: env('PUSH_PROVIDER') === 'mock' && !isProduction() ? new MockPushSender() : new ExpoPushSender(expoToken),
     ring: await loadKeyRing(env('LETTER_ENCRYPTION_KEYS')),
     urls: { web: requireEnv('WEB_BASE_URL').replace(/\/$/, ''), functions: `${supabaseUrl}/functions/v1` },
     optOutSecret: requireEnv('EMAIL_OPTOUT_SECRET'),

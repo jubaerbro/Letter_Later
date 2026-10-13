@@ -1,5 +1,5 @@
 /**
- * Letter Later design tokens.
+ * LaterLetter design tokens.
  *
  * Mood: warm paper, soft sage, dawn peach and a little gold — like a letter kept in a
  * wooden box in a garden. Dark mode is a quiet night orchard, not pure black.

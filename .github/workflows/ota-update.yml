@@ -1,0 +1,35 @@
+name: OTA update
+
+# Ships a JavaScript-only fix to installed apps through EAS Update, without a Play release.
+# Only builds with the same native fingerprint receive it, so native changes still need a new build.
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Update channel
+        type: choice
+        options: [production, preview]
+        default: production
+      message:
+        description: What changed
+        required: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify
+        run: npm run typecheck && npm run lint && npm test
+      - name: Publish update
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          MESSAGE: ${{ inputs.message }}
+        run: npx eas-cli@latest update --channel ${{ inputs.channel }} --environment ${{ inputs.channel }} --message "$MESSAGE" --non-interactive

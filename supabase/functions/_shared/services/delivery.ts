@@ -80,5 +80,9 @@ export async function runDeliveryCycle(
     if (o.claimed < batch) break;
   }
 
+  // Proves the whole chain (cron → function → database) is alive; read by ops_health().
+  await deps.db
+    .rpc('record_worker_heartbeat', { p_summary: { ...summary }, p_now: deps.now().toISOString() })
+    .catch((e) => deps.log('heartbeat_failed', { error: (e as Error).message }));
   return summary;
 }

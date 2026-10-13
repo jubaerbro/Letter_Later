@@ -15,10 +15,10 @@ export default function AccountDeletionInfo() {
   const { session, profile } = useSession();
   return (
     <Screen>
-      <Header onBack={router.canGoBack() ? () => router.back() : undefined} title="Delete your Letter Later account" />
+      <Header onBack={router.canGoBack() ? () => router.back() : undefined} title="Delete your LaterLetter account" />
       <Card style={{ gap: space.sm }}>
         <Text variant="bodyStrong">In the app</Text>
-        <Text color="inkSoft">Open Letter Later → You → Delete account, then type DELETE to confirm.</Text>
+        <Text color="inkSoft">Open LaterLetter → You → Delete account, then type DELETE to confirm.</Text>
         <Text variant="bodyStrong" style={{ marginTop: space.sm }}>On the web</Text>
         <Text color="inkSoft">Sign in on this website and follow the same steps.</Text>
       </Card>

@@ -53,6 +53,14 @@ pending letters, and hiding of existing ones.
   (Re-encrypting old rows is optional and would need a maintenance script.)
 - Each ciphertext is bound to its letter (AES-GCM additional data), so rows can't be swapped.
 
+## Production guards
+
+With `APP_ENV=production` the Edge Functions refuse to start on unsafe configuration (mock
+email or push, test clock, claim-link logging, weak or malformed secrets) and log only the
+names of the offending settings. EAS production builds run the same checks on the public app
+configuration and fail if, for example, a service-role key was pasted where the anon key
+belongs. CI fails if any server secret name appears in a client bundle.
+
 ## Logging
 
 Functions log ids, template names, counts and outcomes only — never letter content, never full
@@ -88,9 +96,10 @@ select event, actor, detail, created_at from public.delivery_events where letter
 select * from cron.job_run_details order by start_time desc limit 20;
 ```
 
-Suggested alerting: a scheduled query (or uptime check) that warns when
-`admin_delivery_issues` is non-empty for more than 15 minutes, plus Supabase's Edge Function
-error logs. Error monitoring for the app (e.g. Sentry) can be added later; if you do, scrub
+Alerting: point an uptime monitor at `GET /functions/v1/health?token=<HEALTH_CHECK_TOKEN>`.
+It returns 503 when the scheduler heartbeat is older than 5 minutes, letters are overdue,
+stuck or failed, or emails are failing/backlogged (`ops_health()`; counts only). Also watch
+Supabase's Edge Function error logs. Error monitoring for the app (e.g. Sentry) can be added later; if you do, scrub
 request bodies and never attach letter content.
 
 ## Moderation

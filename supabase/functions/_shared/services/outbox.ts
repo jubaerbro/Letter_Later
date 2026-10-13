@@ -5,7 +5,7 @@ import type { PushSender } from '../push.ts';
 import type { Db } from './db.ts';
 
 export interface Urls {
-  /** Public web origin that hosts the claim/open pages and Android App Links, e.g. https://letterlater.app */
+  /** Public web origin that hosts the claim/open pages and Android App Links, e.g. https://laterletter.app */
   web: string;
   /** Base URL of Edge Functions, e.g. https://<ref>.supabase.co/functions/v1 */
   functions: string;
@@ -166,7 +166,7 @@ async function sendPushJob(deps: MessagingDeps, job: OutboxJob): Promise<Outcome
   const tokens = job.push_tokens ?? [];
   if (tokens.length === 0) return { kind: 'skip', reason: 'no_push_tokens' };
   const result = await deps.push.send(tokens, {
-    title: String(job.params.title ?? 'Letter Later'),
+    title: String(job.params.title ?? 'LaterLetter'),
     body: String(job.params.body ?? ''),
     data: { letterId: job.letter_id, kind: job.template },
   });

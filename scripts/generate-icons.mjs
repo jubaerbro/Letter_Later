@@ -4,7 +4,7 @@
  *   PLAYWRIGHT_CHROMIUM=/path/to/chromium node scripts/generate-icons.mjs
  * Requires the `playwright` package to be resolvable (npx -p playwright works).
  */
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
@@ -63,8 +63,30 @@ const jobs = [
   { file: 'favicon.png', size: 64, body: background + art(1.15) },
 ];
 
+// Fonts are inlined as data URLs (browsers refuse file:// fonts in inline documents).
+const fontUrl = (rel) => `data:font/ttf;base64,${readFileSync(join(process.cwd(), 'node_modules', '@expo-google-fonts', rel)).toString('base64')}`;
+const featureGraphic = `<html><head><style>
+  @font-face { font-family: Fraunces; src: url('${fontUrl('fraunces/600SemiBold/Fraunces_600SemiBold.ttf')}'); }
+  @font-face { font-family: Nunito; src: url('${fontUrl('nunito/400Regular/Nunito_400Regular.ttf')}'); }
+  body { margin: 0; width: 1024px; height: 500px; overflow: hidden;
+         background: linear-gradient(120deg, #FBEBD8 0%, #F5DCCB 55%, #EBD9E6 100%); font-family: Nunito; }
+  .wrap { display: flex; align-items: center; height: 100%; padding: 0 72px; gap: 40px; }
+  h1 { font-family: Fraunces; font-size: 76px; color: #2C3829; margin: 0 0 14px; letter-spacing: -1px; }
+  p { font-size: 30px; line-height: 1.35; color: #56634F; margin: 0; max-width: 520px; }
+</style></head><body><div class="wrap">
+  <svg width="340" height="340" viewBox="0 0 1024 1024"><circle cx="512" cy="470" r="330" fill="#FFFFFF" opacity="0.45"/>${art(1.08)}</svg>
+  <div><h1>LaterLetter</h1><p>Letters that open in the future — and a tree that grows while you wait.</p></div>
+</div></body></html>`;
+
 const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM || undefined });
 const page = await browser.newPage();
+mkdirSync(join(process.cwd(), 'store'), { recursive: true });
+await page.setViewportSize({ width: 1024, height: 500 });
+await page.setContent(featureGraphic, { waitUntil: 'load' });
+await page.evaluate(() => document.fonts.ready);
+await page.screenshot({ path: join(process.cwd(), 'store', 'feature-graphic.png'), clip: { x: 0, y: 0, width: 1024, height: 500 } });
+console.log('  ✓ store/feature-graphic.png');
+
 for (const job of jobs) {
   await page.setViewportSize({ width: job.size, height: job.size });
   await page.setContent(`<html><body style="margin:0;background:transparent">${svg(job.size, job.body)}</body></html>`);

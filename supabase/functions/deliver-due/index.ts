@@ -3,7 +3,7 @@
 // ALLOW_TEST_CLOCK=true (never in production) to demonstrate delivery with an accelerated clock.
 import { timingSafeEqual } from '../_shared/crypto.ts';
 import { runDeliveryCycle } from '../_shared/services/delivery.ts';
-import { env, HttpError, json, log, messagingDeps, requireEnv, serve } from '../_shared/supabase.ts';
+import { env, HttpError, isProduction, json, log, messagingDeps, requireEnv, serve } from '../_shared/supabase.ts';
 
 serve(['POST'], async (req) => {
   const auth = req.headers.get('Authorization') ?? '';
@@ -12,7 +12,7 @@ serve(['POST'], async (req) => {
   const deps = await messagingDeps();
   const body = (await req.json().catch(() => ({}))) as { now?: string };
   if (body.now) {
-    if (env('ALLOW_TEST_CLOCK') !== 'true') throw new HttpError(400, 'test_clock_disabled');
+    if (env('ALLOW_TEST_CLOCK') !== 'true' || isProduction()) throw new HttpError(400, 'test_clock_disabled');
     const fixed = new Date(body.now);
     if (Number.isNaN(fixed.getTime())) throw new HttpError(400, 'invalid');
     deps.now = () => fixed;

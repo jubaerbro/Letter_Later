@@ -53,7 +53,7 @@ export default function Settings() {
               await Clipboard.setStringAsync(address);
               setCopied(true);
             } else {
-              Share.share({ message: `Write me a letter on Letter Later: ${address}` });
+              Share.share({ message: `Write me a letter on LaterLetter: ${address}` });
             }
           }}
         >
@@ -96,7 +96,7 @@ export default function Settings() {
         <Text variant="small" color="muted" style={{ marginTop: space.sm }}>Animations follow your device’s “reduce motion” setting.</Text>
       </Section>
 
-      <Section title="Letter Later Plus">
+      <Section title="LaterLetter Plus">
         <Row icon="sparkle" label={premium ? 'You have Plus — thank you' : 'Discover Plus'} detail={premium ? 'Faster tree growth and every tree style' : 'Lusher trees and magical styles'} onPress={() => router.push('/premium')} />
         {premium && Platform.OS === 'android' && <Row icon="settings" label="Manage subscription" detail="In Google Play" onPress={openManageSubscriptions} />}
       </Section>
@@ -118,7 +118,7 @@ export default function Settings() {
       </Section>
 
       <View style={{ alignItems: 'center', marginTop: space.xl }}>
-        <Text variant="caption" color="muted">Letter Later · made with care</Text>
+        <Text variant="caption" color="muted">LaterLetter · made with care</Text>
       </View>
       <View style={{ height: 1, backgroundColor: colors.background }} />
     </Screen>

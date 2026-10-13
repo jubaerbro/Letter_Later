@@ -1,4 +1,4 @@
--- Letter Later — integrity triggers, row-level security and grants.
+-- LaterLetter — integrity triggers, row-level security and grants.
 --
 -- Principle: clients get the smallest possible surface. Most reads and every privileged
 -- write go through SECURITY DEFINER functions (next migration) that re-check authorization.
@@ -103,7 +103,7 @@ immutable
 set search_path = ''
 as $$
   select regexp_replace(lower(coalesce(p_name, '')), '[^a-z0-9]', '', 'g') in (
-    'letterlater', 'letterlaterteam', 'admin', 'administrator', 'support', 'moderator',
+    'laterletter', 'laterletterteam', 'admin', 'administrator', 'support', 'moderator',
     'official', 'staff', 'system', 'security', 'help', 'team', 'root', 'postmaster', 'noreply'
   )
 $$;

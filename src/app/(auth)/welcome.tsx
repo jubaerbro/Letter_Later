@@ -49,7 +49,7 @@ export default function Welcome() {
     >
       <View style={{ alignItems: 'center', marginTop: space.xxxl, gap: space.xl }}>
         <Text variant="caption" color="primary" style={{ letterSpacing: 2 }}>
-          LETTER LATER
+          LATERLETTER
         </Text>
         <Tree stage={p.stage} growth={p.growth} style={page === 2 ? 'cherry' : 'oak'} season={currentSeason()} size={220} halo />
         <Text variant="hero" center>

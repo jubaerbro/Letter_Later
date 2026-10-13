@@ -1,14 +1,14 @@
 # Supabase CLI configuration. Used for `supabase link`, `supabase db push` and
 # `supabase functions deploy` against your hosted project (no Docker required for those).
-project_id = "letter-later"
+project_id = "laterletter"
 
 [api]
 schemas = ["public"]
 max_rows = 1000
 
 [auth]
-site_url = "https://letterlater.app"
-additional_redirect_urls = ["letterlater://", "https://letterlater.app"]
+site_url = "https://laterletter.app"
+additional_redirect_urls = ["laterletter://", "https://laterletter.app"]
 enable_signup = true
 
 [auth.email]
@@ -26,6 +26,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.email-optout]
+verify_jwt = false
+
+[functions.health]
 verify_jwt = false
 
 # These require a signed-in user (JWT verified by the platform and again in code).

@@ -1,5 +1,5 @@
 {
-  "name": "letter-later",
+  "name": "laterletter",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
@@ -30,6 +30,7 @@
     "expo-splash-screen": "~57.0.10",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
+    "expo-updates": "~57.0.26",
     "expo-web-browser": "~57.0.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -52,6 +53,7 @@
     "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.2",
     "pg": "^8.23.1",
+    "supabase": "^2.120.0",
     "typescript": "~6.0.3",
     "vitest": "^5.0.4"
   },
@@ -66,9 +68,19 @@
     "test:all": "vitest run",
     "audio:generate": "node scripts/generate-audio.mjs",
     "doctor": "expo-doctor",
-    "check:functions": "deno check supabase/functions/create-letter/index.ts supabase/functions/letter-content/index.ts supabase/functions/deliver-due/index.ts supabase/functions/revenuecat-webhook/index.ts supabase/functions/sync-entitlement/index.ts supabase/functions/delete-account/index.ts supabase/functions/email-optout/index.ts",
+    "check:functions": "deno check supabase/functions/health/index.ts supabase/functions/create-letter/index.ts supabase/functions/letter-content/index.ts supabase/functions/deliver-due/index.ts supabase/functions/revenuecat-webhook/index.ts supabase/functions/sync-entitlement/index.ts supabase/functions/delete-account/index.ts supabase/functions/email-optout/index.ts",
     "icons:generate": "node scripts/generate-icons.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run test:all && npm run check:functions"
+    "verify": "npm run typecheck && npm run lint && npm run test:all && npm run check:functions",
+    "check:env:app": "node --no-warnings scripts/check-env.mjs app",
+    "check:env:server": "node --no-warnings scripts/check-env.mjs server",
+    "secrets:generate": "node scripts/generate-secrets.mjs",
+    "deploy:backend": "node --no-warnings scripts/deploy-backend.mjs",
+    "seed:reviewer": "node --no-warnings scripts/seed-reviewer.mjs",
+    "build:web": "node --no-warnings scripts/build-web.mjs",
+    "eas-build-pre-install": "node --no-warnings scripts/check-env.mjs app"
   },
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=22.18"
+  }
 }

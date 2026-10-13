@@ -28,11 +28,11 @@ serve(['GET', 'POST'], async (req) => {
   if (req.method === 'GET') {
     return page(
       'Stop invitation emails?',
-      'We will stop sending Letter Later invitations to this address. If someone writes to you later, you will not be emailed about it.',
+      'We will stop sending LaterLetter invitations to this address. If someone writes to you later, you will not be emailed about it.',
       `<form method="post"><button style="background:#5b7a52;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-size:15px">Stop emails</button></form>`,
     );
   }
   await new SupabaseDb(serviceClient()).rpc('suppress_email', { p_email: email });
   log('email_opt_out', {});
-  return page('Done', 'You will not receive further invitation emails from Letter Later. Take care.');
+  return page('Done', 'You will not receive further invitation emails from LaterLetter. Take care.');
 });

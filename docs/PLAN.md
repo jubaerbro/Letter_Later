@@ -1,4 +1,4 @@
-# Letter Later — Architecture & Implementation Plan
+# LaterLetter — Architecture & Implementation Plan
 
 Letters that arrive in the future, each one growing a tree while it waits.
 Target: **Google Play (Android) first**, with a responsive web page for
@@ -158,7 +158,7 @@ docs/SETUP.md, docs/PLAY_STORE.md, docs/SECURITY.md
 
 ## 7. Decisions assumed (change before first Play upload)
 
-* App name **Letter Later**, Android package **`app.letterlater.mobile`** (set via
+* App name **LaterLetter**, Android package **`app.laterletter.mobile`** (set via
   `ANDROID_PACKAGE`; *cannot change after the first upload*).
 * Email provider **Resend** behind `EmailProvider`; mock console provider in development.
 * Subscriptions through **RevenueCat** (entitlement id `premium`).

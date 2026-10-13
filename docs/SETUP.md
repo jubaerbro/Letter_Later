@@ -1,4 +1,7 @@
-# Setup — from zero to a working app (no Docker)
+# Development setup (no Docker)
+
+> Going to production? Follow **[DEPLOY.md](DEPLOY.md)** — it automates most of this page
+> (`npm run secrets:generate`, `npm run deploy:backend`) and covers Google Play.
 
 Everything runs against a **hosted Supabase project**; the Supabase CLI talks to it directly.
 You need Node 22+, a Supabase account, an Expo account, and an Android phone (or emulator).
@@ -38,10 +41,10 @@ npm run verify        # typecheck, lint, all tests (starts a throwaway Postgres 
    sender is heavily rate limited and only for testing). With Resend: host `smtp.resend.com`,
    port `465`, user `resend`, password = your Resend API key, sender on your verified domain.
 2. **Authentication → Emails → Templates → Magic link**: include the 6-digit code, e.g.
-   `<p>Your Letter Later code is <strong>{{ .Token }}</strong></p>`. The app signs in with
+   `<p>Your LaterLetter code is <strong>{{ .Token }}</strong></p>`. The app signs in with
    codes, not links.
 3. **Authentication → URL configuration**: Site URL = your `WEB_BASE_URL`; add
-   `letterlater://` and your web URL to redirect URLs.
+   `laterletter://` and your web URL to redirect URLs.
 
 ## 3. Edge Functions
 

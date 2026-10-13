@@ -1,4 +1,4 @@
-# Audio in Letter Later
+# Audio in LaterLetter
 
 All music and sound effects in this folder are **original works generated procedurally** by
 `scripts/generate-audio.mjs` (additive synthesis and filtered noise). No samples, loops or

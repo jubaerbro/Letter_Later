@@ -1,0 +1,8 @@
+# Netlify: connect the repository, then set the EXPO_PUBLIC_* and ANDROID_* variables in
+# Site settings → Environment variables. Routing/headers come from public/_redirects and _headers.
+[build]
+  command = "npm run build:web"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.22.0"

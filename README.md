@@ -1,4 +1,4 @@
-# Letter Later 🌱✉️
+# LaterLetter 🌱✉️
 
 Write letters that open in the future. Every letter plants a seed; while it waits, a tree grows
 for the sender and one for the recipient — and each can see the other's. Built for Google Play
@@ -8,8 +8,24 @@ for the sender and one for the recipient — and each can see the other's. Built
 - **Backend:** Supabase (Postgres + RLS, Auth with email codes, Edge Functions on Deno, pg_cron)
 - **Email:** provider interface — Resend (real) or an explicit mock · **Push:** Expo · **Billing:** Google Play via RevenueCat
 
-Start here: **[docs/SETUP.md](docs/SETUP.md)** · [docs/PLAY_STORE.md](docs/PLAY_STORE.md) ·
-[docs/SECURITY.md](docs/SECURITY.md) · [docs/PLAN.md](docs/PLAN.md) (architecture)
+**Deploying:** **[docs/DEPLOY.md](docs/DEPLOY.md)** (runbook + go-live checklist) ·
+[docs/PLAY_STORE.md](docs/PLAY_STORE.md) · [docs/SECURITY.md](docs/SECURITY.md) ·
+[docs/SETUP.md](docs/SETUP.md) (development) · [docs/PLAN.md](docs/PLAN.md) (architecture)
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `npm run verify` | Typecheck, lint, all tests (unit + real Postgres, no Docker), Deno checks |
+| `npm run secrets:generate` | Creates `supabase/functions/.env` with fresh random secrets (never overwrites) |
+| `npm run check:env:server -- --production` / `check:env:app` | Validates configuration before deploying/building |
+| `npm run deploy:backend` | Migrations, secrets, Edge Functions, Vault, smoke test — one command |
+| `npm run build:web` | Web pages + `/.well-known/assetlinks.json` into `dist/` |
+| `npm run seed:reviewer` | Google Play reviewer account with demo letters |
+| `npm run android` / `npm run web` | Run locally (development build) |
+
+GitHub Actions: **CI** (every push), **Deploy backend**, **Release Android** (EAS build + Play
+submit), **OTA update** (EAS Update) — the last three run on demand.
 
 ## How delivery works
 
@@ -39,31 +55,26 @@ scripts/                 audio & icon generators, moderation tool
   service role), append-only audit trail, status state machine, rate limits, reserved names,
   no account enumeration, encrypted letter contents (AES-256-GCM, versioned keys).
 - **Delivery:** due → sending → delivered/suppressed/failed with retries, stale-lock recovery,
-  concurrent workers, idempotent completion, admin retry and diagnosis view.
+  concurrent workers, idempotent completion, heartbeat + health endpoint, admin retry view.
 - **Server vertical slice** (real service code + real Postgres): sign-up → letter to an
-  unregistered email → invitation email (mock provider) → recipient verifies email and claims
-  → sender notified → sealed letter + countdown → accelerated clock → delivered once → arrival
-  email → opened; plus provider-outage retry.
-- **App:** sign-in with email code (or password), onboarding with personal address, garden,
-  mailbox with search, 5-step composer with DST-safe scheduling and reveal preview,
-  irreversible confirmation, both trees per letter with optional daily care, tree styles &
-  seasons, opening ceremony, ambient music player (background + lock screen), notifications,
-  claim page (app + web), report/block, settings, Plus paywall, account deletion (in app + web).
+  unregistered email → invitation email → claim → sender notified → sealed letter → accelerated
+  clock → delivered once → arrival email → opened; provider-outage retry; reviewer seeding.
+- **App:** email-code sign-in (or password), onboarding, garden, mailbox with search, 5-step
+  composer with DST-safe scheduling and reveal preview, irreversible confirmation, both trees
+  per letter, optional daily care, styles and seasons, opening ceremony, ambient music
+  (background + lock screen), notifications, claim page (app + web), report/block, settings,
+  Plus paywall, account deletion (app + web), OTA updates.
+- **Deployment:** secret generation, configuration checks that block unsafe production
+  deploys/builds, one-command backend deploy, web hosting configs with generated App Links,
+  CI/CD workflows, store listing text, feature graphic and screenshots.
 
-Verification run for this version: `tsc` clean · `expo lint` clean · **204 tests passing**
-(77 unit, 127 database/integration) · all 7 Edge Functions type-check under Deno ·
-`expo export` builds the Android (Hermes) and web bundles · `expo prebuild` manifest checked
-(minimal permissions, App Links) · web build screenshot-reviewed at phone size in light/dark
-with mocked API responses.
+### ⚠️ Needs your accounts (not verifiable from here)
+- Nothing is deployed yet; no real Supabase, Resend, Expo push, Firebase, RevenueCat or Google
+  Play calls have been made. The deploy/seed scripts were exercised in dry-run and against a
+  local Postgres, not against a live Supabase project.
+- No APK/AAB has been compiled on EAS or run on a device; the Android bundle, config plugins,
+  `eas.json` (validated with EAS's own schema) and generated manifest were checked.
+- Privacy policy and terms are accurate drafts — have them reviewed.
 
-### ⚠️ Not verified here (needs your accounts/devices)
-- Nothing has been deployed: no real Supabase project, email, push or RevenueCat calls were made.
-- No native APK was compiled or run on a device (that needs EAS Build); the native bundle,
-  config plugins and manifest were verified.
-- Google Play purchases, push delivery and real email deliverability need your credentials.
-- The privacy policy and terms are accurate drafts of what the code does — have them reviewed.
-
-### Next steps
-1. Follow docs/SETUP.md to create the Supabase project, deploy, and make a development build.
-2. Walk through the flow on a phone with `EMAIL_PROVIDER=mock`, then with Resend.
-3. Work through docs/PLAY_STORE.md (closed testing track first).
+### Next step
+Follow [docs/DEPLOY.md](docs/DEPLOY.md) from step 0.

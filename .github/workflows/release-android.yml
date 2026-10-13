@@ -1,0 +1,38 @@
+name: Release Android
+
+# Builds a signed Android App Bundle on EAS and (optionally) submits it to Google Play's
+# internal track as a draft. Public app configuration (EXPO_PUBLIC_*, EAS_PROJECT_ID) lives in
+# EAS environment variables for the chosen profile — see docs/DEPLOY.md.
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile
+        type: choice
+        options: [production, preview]
+        default: production
+      submit:
+        description: Submit to Google Play (internal track, draft)
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify
+        run: npm run typecheck && npm run lint && npm test
+      - name: Build on EAS
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: >
+          npx eas-cli@latest build --platform android --profile ${{ inputs.profile }} --non-interactive --wait
+          ${{ inputs.submit && inputs.profile == 'production' && '--auto-submit' || '' }}

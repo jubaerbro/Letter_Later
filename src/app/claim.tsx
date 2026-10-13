@@ -86,7 +86,7 @@ export default function Claim() {
         <Section>
           <Card style={{ gap: space.md, alignItems: 'center' }}>
             <Tree stage="sprout" growth={0.2} size={130} sway={false} halo />
-            <Text variant="heading" center>What is Letter Later?</Text>
+            <Text variant="heading" center>What is LaterLetter?</Text>
             <Text color="inkSoft" center>
               A calm place for letters that arrive in the future. While you wait, you’ll grow a little tree for this letter — and {preview.sender_name ? from : 'they'} will see it grow too. It’s free, with no ads.
             </Text>

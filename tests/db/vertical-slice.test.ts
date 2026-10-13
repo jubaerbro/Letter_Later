@@ -13,6 +13,7 @@ import { MockEmailProvider } from '@shared/email/provider';
 import { MockPushSender } from '@shared/push';
 import { runDeliveryCycle } from '@shared/services/delivery';
 import { createLetter, readLetterContent, RequestError } from '@shared/services/letters';
+import { reviewerLetterArgs } from '@shared/services/reviewer';
 import type { MessagingDeps } from '@shared/services/outbox';
 import { createUser, openDb, type TestDb } from './helpers';
 import { PgDb } from './pg-db';
@@ -32,7 +33,7 @@ beforeAll(async () => {
     email,
     push,
     ring: await loadKeyRing(`1:${toBase64(crypto.getRandomValues(new Uint8Array(32)))}`),
-    urls: { web: 'https://letterlater.test', functions: 'https://ref.supabase.test/functions/v1' },
+    urls: { web: 'https://laterletter.test', functions: 'https://ref.supabase.test/functions/v1' },
     optOutSecret: 'test-optout-secret',
     now: () => clock,
     log: () => {},
@@ -77,7 +78,7 @@ describe('vertical slice', () => {
     expect(invite.text).not.toContain('proud');
     expect(invite.text).not.toContain('graduate');
     expect(invite.headers?.['List-Unsubscribe']).toMatch(/email-optout/);
-    const link = invite.text.match(/https:\/\/letterlater\.test\/claim\?token=([A-Za-z0-9_-]{43})/);
+    const link = invite.text.match(/https:\/\/laterletter\.test\/claim\?token=([A-Za-z0-9_-]{43})/);
     expect(link).not.toBeNull();
     claimToken = link![1];
   });
@@ -133,6 +134,9 @@ describe('vertical slice', () => {
 
     const again = await runDeliveryCycle(deps, { workerId: 'tick-3' });
     expect(again.delivered).toBe(0);
+
+    const [beat] = await db.sql(`select last_summary from public.worker_heartbeats where worker = 'deliver-due'`);
+    expect(beat.last_summary).toMatchObject({ delivered: 0 }); // the last tick (tick-3) delivered nothing new
 
     const arrival = email.sent.filter((m) => m.subject.startsWith('Your letter has arrived'));
     expect(arrival).toHaveLength(1);
@@ -192,5 +196,25 @@ describe('vertical slice', () => {
     const sent = email.sent.filter((m) => m.to === 'later@example.com');
     expect(sent).toHaveLength(1);
     expect(sent[0].subject).toBe('A letter is waiting for you'); // anonymous
+  });
+
+  it('the Play reviewer seed produces one letter ready to open and one still growing (idempotently)', async () => {
+    clock = new Date();
+    const reviewer = await createUser(db, { name: 'Play Reviewer', email: 'review@example.com' });
+    for (let run = 0; run < 2; run++) {
+      for (const args of await reviewerLetterArgs(deps.ring, { userId: reviewer.id, email: reviewer.email, timeZone: 'UTC', now: clock })) {
+        const r = await deps.db.rpc<{ ok: boolean; duplicate: boolean }>('create_letter_record', args);
+        expect(r.duplicate).toBe(run === 1);
+      }
+    }
+    await runDeliveryCycle(deps, { workerId: 'seed-tick' });
+    const rows = await db.asUser(reviewer.id, (q) => q(`select subject, display_status, direction from public.mailbox() order by deliver_at`));
+    expect(rows).toEqual([
+      { subject: 'Welcome to LaterLetter', display_status: 'arrived', direction: 'self' },
+      { subject: 'For next year', display_status: 'waiting', direction: 'self' },
+    ]);
+    const [welcome] = await db.sql(`select id from public.letters where idempotency_key = 'reviewer-welcome-v1'`);
+    const opened = await readLetterContent(deps, reviewer.id, welcome.id, true);
+    expect(opened).toMatchObject({ role: 'recipient', subject: 'Welcome to LaterLetter', openedNow: true });
   });
 });

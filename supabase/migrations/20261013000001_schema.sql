@@ -1,4 +1,4 @@
--- Letter Later — core schema
+-- LaterLetter — core schema
 -- All timestamps are timestamptz (stored as UTC). The sender's IANA time zone is kept
 -- alongside deliver_at only for display; deliver_at is the single source of truth.
 

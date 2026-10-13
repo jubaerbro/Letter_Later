@@ -57,7 +57,7 @@ ${ps}
 <p style="margin:28px 0"><a href="${escapeHtml(button.url)}" style="background:#5b7a52;color:#ffffff;text-decoration:none;padding:14px 26px;border-radius:999px;font-family:Helvetica,Arial,sans-serif;font-size:15px;display:inline-block">${escapeHtml(button.label)}</a></p>
 ${fs}
 </td></tr></table>
-<p style="font-size:12px;color:#a59f91;font-family:Helvetica,Arial,sans-serif">Letter Later · letters that arrive when the time is right</p>
+<p style="font-size:12px;color:#a59f91;font-family:Helvetica,Arial,sans-serif">LaterLetter · letters that arrive when the time is right</p>
 </td></tr></table></body></html>`;
 }
 
@@ -79,7 +79,7 @@ export function renderEmail(template: EmailTemplate, ctx: EmailContext, links: T
         html: layout(
           'A letter is growing for you',
           [
-            `${from} wrote you a letter on Letter Later. It is sealed until <strong>${escapeHtml(date)}</strong>.`,
+            `${from} wrote you a letter on LaterLetter. It is sealed until <strong>${escapeHtml(date)}</strong>.`,
             'Claim your free mailbox to watch its tree grow while you wait. You can open the letter in the app or on the web when the day comes.',
           ],
           { label: 'Claim your letter', url: links.actionUrl },
@@ -88,7 +88,7 @@ export function renderEmail(template: EmailTemplate, ctx: EmailContext, links: T
         text: [
           subject,
           '',
-          `${fromText} wrote you a letter on Letter Later. It is sealed until ${date}.`,
+          `${fromText} wrote you a letter on LaterLetter. It is sealed until ${date}.`,
           'Claim your free mailbox to watch its tree grow while you wait:',
           links.actionUrl,
           '',
@@ -113,7 +113,7 @@ export function renderEmail(template: EmailTemplate, ctx: EmailContext, links: T
     }
     case 'letter_arrived': {
       const subject = 'Your letter has arrived ✉️';
-      const extra = links.optOutUrl ? [`<a href="${escapeHtml(links.optOutUrl)}" style="color:#8a867c">Stop emails from Letter Later</a>`] : [];
+      const extra = links.optOutUrl ? [`<a href="${escapeHtml(links.optOutUrl)}" style="color:#8a867c">Stop emails from LaterLetter</a>`] : [];
       return {
         subject,
         html: layout(

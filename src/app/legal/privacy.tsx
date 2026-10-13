@@ -54,7 +54,7 @@ export default function Privacy() {
         },
         {
           heading: 'Children',
-          body: ['Letter Later is for people aged 13 and over. If you believe a child under 13 has an account, contact us and we will delete it.'],
+          body: ['LaterLetter is for people aged 13 and over. If you believe a child under 13 has an account, contact us and we will delete it.'],
         },
         {
           heading: 'Contact',

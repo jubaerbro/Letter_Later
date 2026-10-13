@@ -1,4 +1,4 @@
--- Letter Later — application functions.
+-- LaterLetter — application functions.
 --
 -- Conventions
 --  * SECURITY DEFINER + empty search_path; every object is schema-qualified.
@@ -957,8 +957,8 @@ as $$
     ('willow', stats.premium or stats.nurtures >= 10, 'Care for trees 10 times'),
     ('maple', stats.premium or stats.opened >= 1, 'Open or have a letter opened'),
     ('birch', stats.premium or stats.sent >= 3, 'Plant 3 letters'),
-    ('lantern', stats.premium, 'Letter Later Plus'),
-    ('starlight', stats.premium, 'Letter Later Plus')
+    ('lantern', stats.premium, 'LaterLetter Plus'),
+    ('starlight', stats.premium, 'LaterLetter Plus')
   ) as s(style, unlocked, requirement)
 $$;
 

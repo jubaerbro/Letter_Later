@@ -127,7 +127,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       p.play();
       if (Platform.OS !== 'web') {
         try {
-          p.setActiveForLockScreen(true, { title: chosen.title, artist: 'Letter Later', albumTitle: 'Garden sounds' });
+          p.setActiveForLockScreen(true, { title: chosen.title, artist: 'LaterLetter', albumTitle: 'Garden sounds' });
         } catch {}
       }
     },

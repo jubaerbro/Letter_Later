@@ -62,7 +62,7 @@ describe('tokens and signatures', () => {
 
 describe('email templates never contain letter content', () => {
   const ctx = { senderName: 'Maya', senderHandle: 'maple', recipientName: 'Jun', deliverAt: new Date('2031-06-01T08:00:00Z'), timeZone: 'Europe/London' };
-  const links = { actionUrl: 'https://letterlater.app/claim?token=abc', optOutUrl: 'https://x.supabase.co/functions/v1/email-optout?t=1' };
+  const links = { actionUrl: 'https://laterletter.app/claim?token=abc', optOutUrl: 'https://x.supabase.co/functions/v1/email-optout?t=1' };
 
   it('invitation includes sender, date, claim and opt-out links', () => {
     const e = renderEmail('invitation', ctx, links);
@@ -107,7 +107,7 @@ describe('email providers', () => {
         return new Response(JSON.stringify(body), { status });
       }) as unknown as typeof fetch;
 
-    const ok = await new ResendProvider('re_test', 'Letter Later <hello@letterlater.app>', fake(200, { id: 'em_1' })).send({
+    const ok = await new ResendProvider('re_test', 'LaterLetter <hello@laterletter.app>', fake(200, { id: 'em_1' })).send({
       to: 'a@b.co', subject: 's', html: 'h', text: 't', idempotencyKey: 'outbox-1',
     });
     expect(ok).toEqual({ ok: true, id: 'em_1' });

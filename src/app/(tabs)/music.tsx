@@ -78,7 +78,7 @@ export default function Music() {
                   t.builtIn
                     ? undefined
                     : () =>
-                        Alert.alert('Remove this sound?', 'The file is removed from Letter Later on this device.', [
+                        Alert.alert('Remove this sound?', 'The file is removed from LaterLetter on this device.', [
                           { text: 'Keep', style: 'cancel' },
                           { text: 'Remove', style: 'destructive', onPress: () => a.removeOwnTrack(t.id) },
                         ])
@@ -105,7 +105,7 @@ export default function Music() {
             </Pressable>
           )}
           <Text variant="small" color="muted">
-            Built-in sounds are original to Letter Later. Files you add stay on this device — please only add music you have the right to use.
+            Built-in sounds are original to LaterLetter. Files you add stay on this device — please only add music you have the right to use.
           </Text>
         </View>
       </Section>

@@ -74,7 +74,7 @@ export default function Premium() {
       </View>
       <View style={{ alignItems: 'center', gap: space.md }}>
         <Tree stage="bloom" growth={1} style="starlight" size={180} />
-        <Text variant="hero" center>Letter Later Plus</Text>
+        <Text variant="hero" center>LaterLetter Plus</Text>
         <Text color="inkSoft" center>A little extra magic for your garden.</Text>
       </View>
 

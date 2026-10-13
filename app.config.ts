@@ -13,16 +13,17 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 const variant = process.env.APP_VARIANT ?? 'production'; // development | preview | production
 const isDev = variant === 'development';
 
-const basePackage = process.env.ANDROID_PACKAGE ?? 'app.letterlater.mobile';
-const webUrl = new URL(process.env.EXPO_PUBLIC_WEB_BASE_URL ?? 'https://letterlater.app');
+const basePackage = process.env.ANDROID_PACKAGE ?? 'app.laterletter.mobile';
+const projectId = process.env.EAS_PROJECT_ID;
+const webUrl = new URL(process.env.EXPO_PUBLIC_WEB_BASE_URL ?? 'https://laterletter.app');
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: isDev ? 'Letter Later (Dev)' : 'Letter Later',
-  slug: 'letter-later',
+  name: isDev ? 'LaterLetter (Dev)' : 'LaterLetter',
+  slug: 'laterletter',
   owner: process.env.EXPO_OWNER,
   version: '1.0.0',
-  scheme: isDev ? 'letterlater-dev' : 'letterlater',
+  scheme: isDev ? 'laterletter-dev' : 'laterletter',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   userInterfaceStyle: 'automatic',
@@ -72,7 +73,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     output: 'single',
     favicon: './assets/images/favicon.png',
-    name: 'Letter Later',
+    name: 'LaterLetter',
     themeColor: '#5B7A52',
     backgroundColor: '#F7F1E6',
   },
@@ -100,9 +101,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       { android: { enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true } },
     ],
   ],
+  // Over-the-air JavaScript updates (EAS Update). The fingerprint policy guarantees an update
+  // only reaches builds whose native code it was made for.
+  runtimeVersion: { policy: 'fingerprint' },
+  updates: projectId
+    ? { url: `https://u.expo.dev/${projectId}`, enabled: true, checkAutomatically: 'ON_LOAD', fallbackToCacheTimeout: 0 }
+    : { enabled: false },
   extra: {
     appVariant: variant,
-    eas: process.env.EAS_PROJECT_ID ? { projectId: process.env.EAS_PROJECT_ID } : undefined,
+    eas: projectId ? { projectId } : undefined,
   },
   experiments: {
     typedRoutes: true,

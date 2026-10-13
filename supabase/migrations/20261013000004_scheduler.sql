@@ -1,4 +1,4 @@
--- Letter Later — durable scheduler.
+-- LaterLetter — durable scheduler.
 --
 -- pg_cron calls the deliver-due Edge Function every minute through pg_net. The function
 -- reads due rows from the database, so letters scheduled years ahead need nothing more
@@ -21,10 +21,10 @@ begin
   create extension if not exists pg_cron;
   create extension if not exists pg_net;
 
-  perform cron.unschedule(jobid) from cron.job where jobname in ('letter-later-deliver-due', 'letter-later-maintenance');
+  perform cron.unschedule(jobid) from cron.job where jobname in ('laterletter-deliver-due', 'laterletter-maintenance');
 
   perform cron.schedule(
-    'letter-later-deliver-due',
+    'laterletter-deliver-due',
     '* * * * *',
     $job$
       select net.http_post(
@@ -40,7 +40,7 @@ begin
   );
 
   perform cron.schedule(
-    'letter-later-maintenance',
+    'laterletter-maintenance',
     '17 3 * * *',
     $job$ select public.run_maintenance(); $job$
   );
