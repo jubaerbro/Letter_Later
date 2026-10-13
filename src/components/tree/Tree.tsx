@@ -17,7 +17,21 @@ export interface TreeProps {
   sway?: boolean;
   label?: string;
   containerStyle?: StyleProp<ViewStyle>;
+  /** Soft sunrise behind the tree, for illustrations where small stages would look lost. */
+  halo?: boolean;
+  /** Crop the frame to the current stage so small stages stay visible in thumbnails. */
+  fit?: boolean;
 }
+
+/** Frames per stage for `fit` (same 200:220 aspect as the full scene). */
+const FIT_VIEWBOX: Record<TreeStage, string> = {
+  seed: '59 130 82 90',
+  sprout: '50 110 100 110',
+  sapling: '27 60 146 160',
+  young: '0 0 200 220',
+  mature: '0 0 200 220',
+  bloom: '0 0 200 220',
+};
 
 /** Canopy layout per stage: [dx, dy, r] relative to the crown centre. Hand-tuned for charm. */
 const CANOPY: Record<'sapling' | 'young' | 'mature', [number, number, number][]> = {
@@ -117,7 +131,7 @@ function Canopy({ stage, scale, c, style, season, bloom }: { stage: 'sapling' | 
   );
 }
 
-export function Tree({ stage, growth, style = 'oak', season = 'summer', size = 200, pulseKey = 0, sway = true, label, containerStyle }: TreeProps) {
+export function Tree({ stage, growth, style = 'oak', season = 'summer', size = 200, pulseKey = 0, sway = true, label, containerStyle, halo, fit }: TreeProps) {
   const { scheme, reduceMotion } = useTheme();
   const c = useMemo(() => treeColors(style, season), [style, season]);
   const ground = groundColor(season, scheme === 'dark');
@@ -156,13 +170,26 @@ export function Tree({ stage, growth, style = 'oak', season = 'summer', size = 2
   return (
     <View accessible accessibilityRole="image" accessibilityLabel={a11y} style={[{ width: size, height: size * 1.1, alignItems: 'center' }, containerStyle]}>
       <Animated.View style={[{ width: size, height: size * 1.1, transformOrigin: 'bottom' }, animated]}>
-        <Svg width={size} height={size * 1.1} viewBox="0 0 200 220">
+        <Svg width={size} height={size * 1.1} viewBox={fit ? FIT_VIEWBOX[shape] : '0 0 200 220'}>
           <Defs>
+            <RadialGradient id="halo" cx="50%" cy="50%" r="50%">
+              <Stop offset="0%" stopColor={scheme === 'dark' ? '#3B4A3A' : '#FFF4DF'} stopOpacity={1} />
+              <Stop offset="70%" stopColor={scheme === 'dark' ? '#2A3529' : '#FBE6CF'} stopOpacity={0.7} />
+              <Stop offset="100%" stopColor={scheme === 'dark' ? '#2A3529' : '#FBE6CF'} stopOpacity={0} />
+            </RadialGradient>
             <RadialGradient id="glow" cx="50%" cy="45%" r="55%">
               <Stop offset="0%" stopColor={c.glow ?? c.blossom} stopOpacity={bloom ? 0.55 : 0.18} />
               <Stop offset="100%" stopColor={c.glow ?? c.blossom} stopOpacity={0} />
             </RadialGradient>
           </Defs>
+          {halo && (
+            <G>
+              <Circle cx={100} cy={118} r={92} fill="url(#halo)" />
+              {[[38, 58, 2.4], [160, 44, 1.8], [150, 112, 2], [52, 128, 1.6], [96, 30, 1.4]].map(([x, y, r], i) => (
+                <Circle key={i} cx={x} cy={y} r={r} fill={scheme === 'dark' ? '#E6C46A' : '#E9C46A'} opacity={0.75} />
+              ))}
+            </G>
+          )}
           {(bloom || styleInfo(style).premium) && <Circle cx={100} cy={100} r={96} fill="url(#glow)" />}
 
           {/* ground */}

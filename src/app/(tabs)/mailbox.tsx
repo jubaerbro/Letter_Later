@@ -121,8 +121,9 @@ function MailRow({ item, hemisphere, subject }: { item: MailboxItem; hemisphere:
       onPress={go}
       style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.md, borderRadius: radius.lg, backgroundColor: pressed ? colors.surfaceSunken : colors.surface, borderWidth: 1, borderColor: colors.border })}
     >
-      <Tree stage={mine?.stage ?? 'seed'} growth={mine?.growth ?? 0.05} style={mine?.style ?? 'oak'} season={currentSeason(hemisphere)} size={56} sway={false} />
+      <Tree stage={mine?.stage ?? 'seed'} growth={mine?.growth ?? 0.05} style={mine?.style ?? 'oak'} season={currentSeason(hemisphere)} size={56} sway={false} fit />
       <View style={{ flex: 1, gap: 2 }}>
+        <StatusChip item={item} />
         <Text variant="bodyStrong" numberOfLines={1}>
           {title}
         </Text>
@@ -136,7 +137,6 @@ function MailRow({ item, hemisphere, subject }: { item: MailboxItem; hemisphere:
           {formatDate(item.deliver_at)}
         </Text>
       </View>
-      <StatusChip item={item} />
     </Pressable>
   );
 }

@@ -52,7 +52,7 @@ export default function Onboarding() {
     <Screen gradient="meadow" footer={<Button label="Plant my garden" size="lg" loading={busy} disabled={!name.trim() || !terms || !age} onPress={submit} />}>
       <Header title="Your little corner" subtitle="A few gentle details, and your garden is ready." />
       <View style={{ alignItems: 'center', marginBottom: space.lg }}>
-        <Tree stage="sprout" growth={0.2} size={140} />
+        <Tree stage="sprout" growth={0.2} size={150} halo />
       </View>
 
       <View style={{ gap: space.lg }}>

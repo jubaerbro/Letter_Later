@@ -151,7 +151,7 @@ export async function fetchLetter(id: string): Promise<MailboxItem | null> {
 }
 
 export const createLetter = (input: CreateLetterInput) =>
-  invoke<{ letterId: string; duplicate: boolean; invited: boolean; isSelf: boolean; invitationEmail: string | null }>('create-letter', input);
+  invoke<{ letterId: string; duplicate: boolean; isSelf: boolean; notificationEmail: string | null }>('create-letter', input);
 
 export const letterContent = (letterId: string, open: boolean) =>
   invoke<{ role: 'sender' | 'recipient'; subject: string; body: string; openedNow: boolean }>('letter-content', { letterId, open });

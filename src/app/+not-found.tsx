@@ -10,7 +10,7 @@ export default function NotFound() {
   return (
     <Screen>
       <View style={{ alignItems: 'center', marginTop: space.xxxl, gap: space.lg }}>
-        <Tree stage="sprout" growth={0.2} size={150} />
+        <Tree stage="sprout" growth={0.2} size={150} halo />
         <Text variant="title" center>This path leads nowhere</Text>
         <Text color="inkSoft" center>Let’s walk back to the garden.</Text>
         <Button label="Go to the garden" onPress={() => router.replace('/')} />

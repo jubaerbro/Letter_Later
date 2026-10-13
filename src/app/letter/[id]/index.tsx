@@ -21,11 +21,11 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 
 const INVITE_TEXT: Record<string, string> = {
-  queued: 'Invitation email waiting to send — we retry automatically.',
-  sending: 'Invitation email sending…',
-  provider_accepted: 'Invitation handed to our email service. (That doesn’t guarantee it reached their inbox or was read.)',
-  failed: 'We couldn’t send the invitation email. The letter will still be waiting for them if they sign up with that address.',
-  skipped: 'No invitation email was sent (the address opted out, or received several today). The letter still waits for them.',
+  queued: 'Email letting them know is waiting to send — we retry automatically.',
+  sending: 'Email letting them know is sending…',
+  provider_accepted: 'Email handed to our email service. (That doesn’t guarantee it reached their inbox or was read.)',
+  failed: 'We couldn’t send the email. The letter still waits for them and arrives on the day.',
+  skipped: 'No email was sent this time. The letter still waits for them and arrives on the day.',
 };
 
 export default function LetterDetail() {
@@ -206,7 +206,7 @@ export default function LetterDetail() {
             <Divider />
             {item.direction === 'sent' && item.invite_status && (
               <>
-                <Row icon="mailbox" label="Invitation" detail={INVITE_TEXT[item.invite_status]} />
+                <Row icon="mailbox" label="They’ve been told" detail={INVITE_TEXT[item.invite_status]} />
                 <Divider />
               </>
             )}

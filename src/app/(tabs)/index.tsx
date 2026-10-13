@@ -153,7 +153,7 @@ export default function Garden() {
 
         {mailbox.data && items.length === 0 && (
           <View style={{ alignItems: 'center', marginTop: space.xxl, gap: space.md }}>
-            <Tree stage="seed" growth={0.06} season={currentSeason(hemisphere)} size={170} />
+            <Tree stage="seed" growth={0.06} season={currentSeason(hemisphere)} size={170} halo />
             <Text variant="heading" center>
               Your garden is waiting for its first seed
             </Text>

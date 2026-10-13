@@ -120,8 +120,10 @@ export default function OpenLetter() {
                 onPress={reduceMotion ? () => breakSeal() : undefined}
                 style={{ alignItems: 'center', justifyContent: 'center' }}
               >
-                <Animated.View style={[{ position: 'absolute', width: 120, height: 120, borderRadius: 60, backgroundColor: colors.goldSoft, top: 70 }, ring]} />
-                <Envelope width={260} open={phase === 'opening'} initial={item?.is_anonymous ? undefined : who[0]} />
+                <Animated.View style={[{ position: 'absolute', zIndex: 0, width: 220, height: 220, borderRadius: 110, backgroundColor: colors.goldSoft, top: -20 }, ring]} />
+                <View style={{ zIndex: 1 }}>
+                  <Envelope width={260} open={phase === 'opening'} initial={item?.is_anonymous ? undefined : who[0]} />
+                </View>
               </Pressable>
               <Text color="inkSoft" center>{phase === 'opening' ? 'Unfolding…' : 'Press and hold the seal'}</Text>
               <Button label="Open it" variant="ghost" onPress={() => breakSeal()} accessibilityHint="Opens without holding" />

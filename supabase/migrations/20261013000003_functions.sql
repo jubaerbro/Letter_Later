@@ -734,6 +734,22 @@ begin
 end;
 $$;
 
+-- Status of the "a letter is waiting for you" email, whether the recipient already had an
+-- account (letter_waiting) or not (invitation). Senders see the same thing either way, so
+-- sending a letter can never be used to discover whether an email address has an account.
+create or replace function public.recipient_email_status(p_letter_id uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select status::text from public.outbox
+  where idempotency_key in ('invitation:' || p_letter_id, 'waiting-email:' || p_letter_id)
+  order by created_at
+  limit 1
+$$;
+
 -- ---------------------------------------------------------------------------
 -- Mailbox: the only way clients read letter metadata. Applies reveal rules.
 -- ---------------------------------------------------------------------------
@@ -819,7 +835,7 @@ as $$
       else 'waiting'
     end,
     l.accepted_at is not null,
-    (select o.status::text from public.outbox o where o.idempotency_key = 'invitation:' || l.id),
+    public.recipient_email_status(l.id),
     mine.id, mine.style, mine.points,
     theirs.style, theirs.points, theirs.id is not null,
     l.delivered_at, l.opened_at
@@ -892,15 +908,6 @@ begin
 end;
 $$;
 
-create or replace function public.invitation_email_status(p_letter_id uuid)
-returns text
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select status::text from public.outbox where idempotency_key = 'invitation:' || p_letter_id
-$$;
 
 create or replace function public.mark_letter_opened(p_user_id uuid, p_letter_id uuid, p_now timestamptz default now())
 returns boolean

@@ -119,13 +119,14 @@ export async function createLetter(deps: MessagingDeps, senderId: string, req: C
       deps.log('immediate_send_failed', { letter_id: result.letter_id, error: (e as Error).message }),
     );
   }
-  const invitationEmail = await deps.db.rpc<string | null>('invitation_email_status', { p_letter_id: result.letter_id });
+  // Deliberately uniform: the response never reveals whether the recipient already has an
+  // account (that would let anyone test which email addresses are registered).
+  const notificationEmail = await deps.db.rpc<string | null>('recipient_email_status', { p_letter_id: result.letter_id });
   return {
     letterId: result.letter_id,
     duplicate: result.duplicate,
-    invited: !!result.invited,
     isSelf: !!result.is_self,
-    invitationEmail,
+    notificationEmail,
   };
 }
 

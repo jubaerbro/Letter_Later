@@ -58,7 +58,8 @@ describe('vertical slice', () => {
       timeZone: 'Europe/London',
     });
     letterId = result.letterId;
-    expect(result).toMatchObject({ duplicate: false, invited: true, invitationEmail: 'provider_accepted' });
+    expect(result).toMatchObject({ duplicate: false, notificationEmail: 'provider_accepted' });
+    expect(result).not.toHaveProperty('invited');
   });
 
   it('3. the content is stored encrypted — the database never sees the words', async () => {
@@ -183,7 +184,7 @@ describe('vertical slice', () => {
       deliverAt: new Date(Date.now() + 5 * 3600_000).toISOString(),
       timeZone: 'UTC',
     });
-    expect(res.invitationEmail).toBe('queued');
+    expect(res.notificationEmail).toBe('queued');
 
     clock = new Date(Date.now() + 2 * 60_000); // after the 1-minute backoff
     const tick = await runDeliveryCycle(deps, { workerId: 'retry' });

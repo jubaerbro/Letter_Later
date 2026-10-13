@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/pg": "^8.23.1",
     "@types/react": "~19.2.2",
+    "deno": "^2.9.6",
     "embedded-postgres": "^17.6.0-beta.15",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.2",
@@ -56,7 +57,7 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
+    "android": "expo run:android",
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
@@ -64,7 +65,10 @@
     "test:db": "vitest run --project db",
     "test:all": "vitest run",
     "audio:generate": "node scripts/generate-audio.mjs",
-    "doctor": "expo-doctor"
+    "doctor": "expo-doctor",
+    "check:functions": "deno check supabase/functions/create-letter/index.ts supabase/functions/letter-content/index.ts supabase/functions/deliver-due/index.ts supabase/functions/revenuecat-webhook/index.ts supabase/functions/sync-entitlement/index.ts supabase/functions/delete-account/index.ts supabase/functions/email-optout/index.ts",
+    "icons:generate": "node scripts/generate-icons.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run test:all && npm run check:functions"
   },
   "private": true
 }

@@ -153,7 +153,7 @@ create index letters_pending_email_idx on public.letters (recipient_email) where
 
 create table public.letter_contents (
   letter_id uuid primary key references public.letters (id) on delete cascade,
-  ciphertext text not null,   -- base64 AES-256-GCM of JSON {subject, body}
+  ciphertext text not null check (char_length(ciphertext) <= 120000), -- base64 AES-256-GCM of JSON {subject, body}
   iv text not null,           -- base64 96-bit nonce
   key_version integer not null,
   created_at timestamptz not null default now()

@@ -51,7 +51,7 @@ export default function Welcome() {
         <Text variant="caption" color="primary" style={{ letterSpacing: 2 }}>
           LETTER LATER
         </Text>
-        <Tree stage={p.stage} growth={p.growth} style={page === 2 ? 'cherry' : 'oak'} season={currentSeason()} size={220} />
+        <Tree stage={p.stage} growth={p.growth} style={page === 2 ? 'cherry' : 'oak'} season={currentSeason()} size={220} halo />
         <Text variant="hero" center>
           {p.title}
         </Text>

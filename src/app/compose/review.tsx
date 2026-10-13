@@ -52,7 +52,7 @@ export default function ComposeReview() {
       reset();
       router.replace({
         pathname: '/compose/planted',
-        params: { id: result.letterId, invited: result.invited ? '1' : '0', email: result.invitationEmail ?? '', self: result.isSelf ? '1' : '0' },
+        params: { id: result.letterId, email: result.notificationEmail ?? '', self: result.isSelf ? '1' : '0' },
       });
     } catch (e) {
       // The idempotency key stays the same, so trying again can never create a second letter.

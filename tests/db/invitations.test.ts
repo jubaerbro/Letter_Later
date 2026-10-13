@@ -126,6 +126,19 @@ describe('claiming requires verified ownership of the invited address', () => {
     expect(mail).toEqual([{ template: 'letter_waiting', to_user_id: existing.id }]);
   });
 
+  it('the sender cannot tell whether an email address has an account (no enumeration)', async () => {
+    await createUser(db, { email: 'has-account@example.com' });
+    const a = await createLetter(db, sender.id, { recipient: 'has-account@example.com' });
+    const b = await createLetter(db, sender.id, { recipient: 'no-account@example.com' });
+    const view = await db.asUser(sender.id, (q) =>
+      q(`select letter_id, counterpart_name, invite_status, accepted, their_tree_exists, display_status from public.mailbox() where letter_id = any($1)`, [[a.letter_id, b.letter_id]]),
+    );
+    const strip = (r: Record<string, unknown>) => ({ ...r, letter_id: undefined, counterpart_name: undefined });
+    expect(view).toHaveLength(2);
+    expect(strip(view[0])).toEqual(strip(view[1]));
+    expect(view[0].invite_status).toBe('queued');
+  });
+
   it('letters by personal address resolve to the right person', async () => {
     const friend = await createUser(db, { name: 'Friend' });
     const res = await createLetter(db, sender.id, { recipientKind: 'handle', recipient: `@${friend.handle}` });

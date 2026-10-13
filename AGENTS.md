@@ -39,3 +39,10 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## This project (Letter Later)
+
+- Shared domain logic lives in `supabase/functions/_shared/domain` and is imported by the app as `@shared/...` (keep it dependency-free; Deno imports need `.ts` extensions).
+- Never weaken: RLS/grants in `supabase/migrations`, the letter immutability trigger, or the rule that tree growth never changes `deliver_at`.
+- Before declaring work done: `npm run verify` (typecheck, lint, unit + real-Postgres tests, Deno checks).
+- Use `EXPO_OFFLINE=1 npx expo install <pkg>` if the Expo API is unreachable; it uses the SDK's bundled version map.

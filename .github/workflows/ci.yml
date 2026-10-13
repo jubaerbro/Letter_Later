@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Database tests (real Postgres via embedded-postgres, no Docker)
+        run: npm run test:db
+      - name: Type-check Edge Functions with Deno
+        run: npm run check:functions
+      - name: Bundle Android and web
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key-not-a-secret
+        run: npx expo export --platform android --platform web
