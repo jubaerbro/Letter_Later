@@ -886,9 +886,20 @@ begin
   return jsonb_build_object(
     'ok', true, 'role', v_role,
     'ciphertext', v_content.ciphertext, 'iv', v_content.iv, 'key_version', v_content.key_version,
+    'idempotency_key', v_letter.idempotency_key,
     'first_open', v_role = 'recipient' and v_letter.status = 'delivered'
   );
 end;
+$$;
+
+create or replace function public.invitation_email_status(p_letter_id uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select status::text from public.outbox where idempotency_key = 'invitation:' || p_letter_id
 $$;
 
 create or replace function public.mark_letter_opened(p_user_id uuid, p_letter_id uuid, p_now timestamptz default now())
@@ -1322,6 +1333,7 @@ set search_path = ''
 as $$
 #variable_conflict use_column
 begin
+  p_now := coalesce(p_now, now()); -- null = use the database clock (immediate sends)
   return query
   with candidates as (
     select o.id from public.outbox o
@@ -1357,7 +1369,7 @@ declare
   v_row public.outbox;
 begin
   update public.outbox
-  set status = 'provider_accepted', provider_message_id = left(p_provider_message_id, 200), sent_at = p_now,
+  set status = 'provider_accepted', provider_message_id = left(p_provider_message_id, 200), sent_at = coalesce(p_now, now()),
       locked_at = null, locked_by = null, last_error = null
   where id = p_id and status = 'sending' and locked_by = p_worker
   returning * into v_row;
@@ -1393,7 +1405,7 @@ begin
   end if;
   update public.outbox
   set status = 'queued', last_error = left(p_error, 500), locked_at = null, locked_by = null,
-      next_attempt_at = p_now + public.retry_backoff(v_row.attempts)
+      next_attempt_at = coalesce(p_now, now()) + public.retry_backoff(v_row.attempts)
   where id = p_id;
   return 'retry';
 end;
